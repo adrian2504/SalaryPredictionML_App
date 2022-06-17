@@ -9,3 +9,14 @@ def load_model():
 
 
 data = load_model()
+
+regressor = data["model"]
+le_country = data["le_country"]
+le_eduaction = data["le_education"]
+
+def show_predict_page():
+    st.title("Software Developer Salary Prediction")
+    st.write("### We need some information to predict the salary")
+
+
+show_predict_page()
