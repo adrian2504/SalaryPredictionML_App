@@ -7,53 +7,50 @@ def load_model():
         data = pickle.load(file)
     return data
 
+data = load_model()
+regressor = data["model"]
+le_country = data["le_country"]
+le_education = data["le_education"]
 
 def show_predict_page():
     st.title("Software Developer Salary Prediction")
     st.write("""### We need some information to predict the salary""")
 
-data = load_model()
+    countries = (
+        "United States of America",
+        "India",
+        "United Kingdom",
+        "Germany",
+        "Canada",
+        "Brazil",
+        "France",
+        "Spain",
+        "Australia",
+        "Netherlands",
+        "Poland",
+        "Italy",
+        "Russian Federation",
+        "Sweden"
+    )
 
-regressor = data["model"]
-le_country = data["le_country"]
-le_education = data["le_education"]
+    education = (
+        "Less than a Bachelors", 
+        "Bachelor’s degree",
+        "Master’s degree",
+        "Post Grad"
+    )
 
+    country = st.selectbox("Countries", countries)
+    education = st.selectbox("Education Level", education)
+    experience = st.slider("Experience Level",0 , 50, 3)
 
-countries = (
-    "United States",
-    "India",
-    "United Kingdom",
-    "Germany",
-    "Canada",
-    "Brazil",
-    "France",
-    "Spain",
-    "Australia",
-    "Netherlands",
-    "Poland",
-    "Italy",
-    "Russian Federation",
-    "Sweden"
-)
+    ok = st.button("Calculate Salary")
 
-education = (
-    "Less than a Bachelors", 
-    "Bachelor’s degree",
-    "Master’s degree",
-    "Post Grad"
-)
+    if ok:
+        x = np.array([[country,education,experience]])
+        x[:,0] = le_country.transform(x[:,0])
+        x[:,1] = le_education.transform(x[:,1])
+        x = x.astype(float)
 
-country = st.selectbox("Countries", countries)
-education = st.selectbox("Education Level", education)
-experience = st.slider("Experience Level",0 , 50, 3)
-
-ok = st.button("Calculate Salary")
-
-if ok:
-    x = np.array([[country,education,experience]])
-    x[:,0] = le_country.transform(x[:,0])
-    x[:,1] = le_education.transform(x[:,1])
-    x = x.astype(float)
-
-    salary = regressor.predict(x)
-    st.subheader(f"The estimated salary is ${salary[0]:.2f}")
+        salary = regressor.predict(x)
+        st.subheader(f"The estimated salary is ${salary[0]:.2f}")
